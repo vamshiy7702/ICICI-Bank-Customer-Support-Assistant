@@ -1,0 +1,14 @@
+streamlit
+langchain
+langchain-community
+langchain-text-splitters
+langchain-huggingface
+langchain-groq
+langchain-tavily
+faiss-cpu
+python-dotenv
+langchain-classic
+beautifulsoup4 
+lxml
+sentence-transformers
+torchvision
