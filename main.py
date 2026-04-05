@@ -74,8 +74,8 @@ def initialize_icici_agent():
         # Note: Replace model string if your Groq account uses a different model name
         llm = ChatGroq(
             groq_api_key=os.getenv("GROQ_API_KEY"),
-            model="llama-3.3-70b-versatile",
-            temperature=0.0
+            model="qwen/qwen3-32b",
+            temperature=0.7
         )
 
         prompt = ChatPromptTemplate.from_messages([
@@ -88,7 +88,12 @@ def initialize_icici_agent():
         tools = [rag_tool, web_search]
         agent = create_tool_calling_agent(llm, tools, prompt)
         
-        return AgentExecutor(agent=agent, tools=tools, verbose=False, handle_parsing_errors=True)
+        return AgentExecutor(agent=agent, 
+                             tools=tools,
+                               verbose=False, 
+                               handle_parsing_errors=True,
+                               max_iterations=3,
+                               max_execution_time=30)
     except Exception as e:
         st.error(f"⚠️ Failed to initialize Agent: {e}")
         return None
