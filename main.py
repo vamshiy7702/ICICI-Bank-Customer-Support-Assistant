@@ -471,9 +471,8 @@ CONTENT:
 
 def build_knowledge_search_tool(
     retriever: SimpleFAISSRetriever,
-    tavily_search: TavilySearch,
-):
-
+    tavily_search: TavilySearch):
+    
     @tool
     def knowledge_search(query: str) -> str:
         """
@@ -563,8 +562,7 @@ Customer Care at 1860 120 7777 or visit your nearest branch.
 
 def initialize_agent(
     retriever: SimpleFAISSRetriever,
-    tavily_search: TavilySearch,
-):
+    tavily_search: TavilySearch,):
 
     knowledge_search = build_knowledge_search_tool(
         retriever=retriever,
@@ -587,7 +585,6 @@ def initialize_agent(
     )
 
     return agent
-
 
 # ============================================================
 # 11. EXTRACT FINAL AI TEXT
@@ -815,7 +812,6 @@ for message in st.session_state.messages:
         st.markdown(
             message["content"]
         )
-
 
 # ============================================================
 # 17. USER INPUT
