@@ -1,7 +1,6 @@
 import os
 import re
-from typing import List, Tuple
-
+from typing import List, Tuple 
 import faiss
 import numpy as np
 import requests
@@ -16,12 +15,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from langchain_tavily import TavilySearch
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-
-
-# ============================================================
-# 1. ENVIRONMENT
-# ============================================================
+from langchain_text_splitters import RecursiveCharacterTextSplitter 
 
 load_dotenv()
 
@@ -36,10 +30,6 @@ if not TAVILY_API_KEY:
     st.error("TAVILY_API_KEY is missing from .env file.")
     st.stop()
 
-
-# ============================================================
-# 2. SYSTEM PROMPT
-# ============================================================
 
 SYSTEM_PROMPT = """
 You are an expert ICICI Bank Customer Support Assistant.
@@ -143,17 +133,10 @@ Never ask the user for:
 Professional, secure, concise and customer-focused.
 """
 
-
-# ============================================================
-# 3. ICICI KNOWLEDGE BASE URL
-# ============================================================
-
 KB_URL = (
     "https://www.icici.bank.in/personal-banking/help"
     "?ITM=nli_imobileFaqs_waysToBank_mobileBanking_imobileFaqs_"
-    "headercomponent_222_CMS_help_informationCenter_NLI"
-)
-
+    "headercomponent_222_CMS_help_informationCenter_NLI")
 
 # ============================================================
 # 4. SIMPLE FAISS RETRIEVER
@@ -166,8 +149,8 @@ class SimpleFAISSRetriever:
         documents: List[Document],
         embeddings: HuggingFaceEmbeddings,
         k: int = 3,
-        score_threshold: float = 0.50,
-    ):
+        score_threshold: float = 0.50,):
+
         self.documents = documents
         self.embeddings = embeddings
         self.k = k
@@ -233,10 +216,6 @@ def initialize_resources():
 
     try:
 
-        # ----------------------------------------------------
-        # Load ICICI webpage
-        # ----------------------------------------------------
-
         headers = {
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -263,7 +242,6 @@ def initialize_resources():
             "html.parser",
         )
 
-        # Remove unnecessary HTML
         for element in soup(
             ["script", "style", "noscript"]
         ):
@@ -343,11 +321,6 @@ def initialize_resources():
 
         return None
 
-
-# ============================================================
-# 6. TAVILY SEARCH
-# ============================================================
-
 @st.cache_resource
 def initialize_tavily():
 
@@ -358,8 +331,6 @@ def initialize_tavily():
         include_answer=False,
         include_raw_content=False,
     )
-
-
 # ============================================================
 # 7. RAG SEARCH FUNCTION
 # ============================================================
@@ -405,10 +376,7 @@ CONTENT:
 # 8. WEB SEARCH FUNCTION
 # ============================================================
 
-def run_web_search(
-    query: str,
-    tavily_search: TavilySearch,
-) -> str:
+def run_web_search(query: str,tavily_search: TavilySearch) -> str:
 
     try:
 
@@ -602,11 +570,10 @@ def initialize_agent(
         retriever=retriever,
         tavily_search=tavily_search,
     )
-
     # Current Groq model
     llm = ChatGroq(
         groq_api_key=GROQ_API_KEY,
-        model="qwen/qwen3.8-27b",
+        model="openai/gpt-oss-120b",
         temperature=0.2,
     )
 
@@ -855,12 +822,7 @@ for message in st.session_state.messages:
 # ============================================================
 
 if user_input := st.chat_input(
-    "Ask about ICICI Bank services, accounts, cards, loans, UPI..."
-):
-
-    # --------------------------------------------------------
-    # Add user message
-    # --------------------------------------------------------
+    "Ask about ICICI Bank services, accounts, cards, loans, UPI..."):
 
     st.session_state.messages.append(
         {
@@ -871,10 +833,6 @@ if user_input := st.chat_input(
 
     with st.chat_message("user"):
         st.markdown(user_input)
-
-    # --------------------------------------------------------
-    # Greeting
-    # --------------------------------------------------------
 
     if is_greeting(
         user_input
@@ -913,11 +871,6 @@ if user_input := st.chat_input(
             ):
 
                 try:
-
-                    # ----------------------------------------
-                    # Initialize components
-                    # ----------------------------------------
-
                     retriever = initialize_resources()
 
                     if retriever is None:
@@ -934,12 +887,6 @@ if user_input := st.chat_input(
                         retriever=retriever,
                         tavily_search=tavily_search,
                     )
-
-                    # ----------------------------------------
-                    # Build conversation history
-                    #
-                    # Limit to last 12 messages
-                    # ----------------------------------------
 
                     recent_messages = (
                         st.session_state.messages[-12:]
@@ -996,10 +943,6 @@ if user_input := st.chat_input(
                     )
 
             st.markdown(response)
-
-    # --------------------------------------------------------
-    # Store assistant response
-    # --------------------------------------------------------
 
     st.session_state.messages.append(
         {
